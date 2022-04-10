@@ -45,7 +45,8 @@ else:
 tab1_layout =DrugGUI.make_layout(do_not_show=[])
 
 # ---NEW--- Tab for adding drugs to DB
-tab2_layout =DrugGUI.add_drug()
+# tab2_layout =DrugGUI.add_drug(form)
+# tab2_layout =[]
 
 
 
@@ -68,12 +69,32 @@ main_layout = [
                 ]),
         sg.Column(
                 [[sg.TabGroup(
-                    [[sg.Tab('Drug Info.', tab1_layout, tooltip='Edit View',key='-TAB_EDIT-'), sg.Tab('New Drug', tab2_layout)]])]])
+                    [[sg.Tab('Drug Info.', tab1_layout, tooltip='Edit View',key='-TAB_EDIT-')]])]])
     ]
 ]
 
 window = CustomWindow(APP_NAME, layout=main_layout, enable_close_attempted_event=True)
 
+def add_drug():
+    form = sg.FlexForm('Add drug form')  # begin with a blank form
+
+    layout = [
+            [sg.Text('Please enter all the required information')],
+            [sg.Text('ATC', size=(15, 1)), sg.InputText()],
+            [sg.Text('DIN', size=(15, 1)), sg.InputText()],
+            [sg.Text('Province', size=(15, 1)), sg.InputText()],
+            [sg.Text('Side affect', size=(15, 1)), sg.InputText()],
+            [sg.Text('Name', size=(15, 1)), sg.InputText()],
+            [sg.Text('Drug type', size=(15, 1)), sg.InputText()],
+            [sg.Submit(), sg.Cancel()]
+            ]
+
+    button, values = form.Layout(layout).Read()
+
+    print(button, values[0], values[1], values[2], values[3],
+                values[4], values[5], values[6])
+
+    form.close()
 
 
 def refresh_collection_page():
@@ -94,7 +115,7 @@ def set_drug_focus(drug):
     #scrolling and selecting the updated drug in the listbox
     window['-DRUGS-'].update(set_to_index=[page_pos], scroll_to_index=page_pos)   
     DrugGUI.update(window,drug)
-    DrugGUI.draw_labels(window['-LABEL_GRAPH-'],drug)
+    # DrugGUI.draw_labels(window['-LABEL_GRAPH-'],drug)
 
 def clear_ui():#when logging out
     window.set_title(APP_NAME)
@@ -190,7 +211,7 @@ while True:
             new_drug=Drug.new()
             drug_collection.select(new_drug)
             DrugGUI.update(window,new_drug)
-            DrugGUI.draw_label(window['-LABEL_GRAPH-'],new_drug)        
+            # DrugGUI.draw_label(window['-LABEL_GRAPH-'],new_drug)        
             window['-TAB_EDIT-'].select()
             window['DIN'].SetFocus()
             

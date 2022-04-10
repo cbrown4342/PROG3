@@ -96,7 +96,7 @@ class DrugGUI(Drug):
 
     # ---NEW--- Adding drugs to DB
     @classmethod
-    def add_drug(cls, button, values):
+    def add_drug(cls,form):
 
         form = sg.FlexForm('Add drug form')  # begin with a blank form
 
@@ -150,7 +150,8 @@ class DrugGUI(Drug):
                     #for undefined fields, default UI element is an readonly input text box
                     layout.append([psg.T(k,size=(12,1)),psg.InputText(key=k,size=(30,1),disabled=True)])        
 
-        layout.append([psg.T(size=(12,1)),psg.Button('Update',key='-RECORD-UPDATE-')])
+        layout.append([psg.T(size=(12,1)),psg.Button('Update',key='-RECORD-UPDATE-'), psg.T(size=(1,1)),psg.Button('New',key='New record...')])
+        # layout.append([psg.T(size=(22,1)),psg.Button('New record',key='New record...')])
         return layout
 
     @classmethod
