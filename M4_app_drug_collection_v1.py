@@ -17,6 +17,8 @@
 APP_VERSION='v1'
 APP_NAME=f'CVH Drug Formulary Admin ({APP_VERSION})'
 
+from optparse import Values
+from tkinter import Button
 import PySimpleGUI as sg
 #import PySimpleGUIWeb as sg #for web UI
 import os
@@ -42,7 +44,14 @@ else:
 
 tab1_layout =DrugGUI.make_layout(do_not_show=[])
 
-# tab2_layout = [     
+# ---NEW--- Tab for adding drugs to DB
+tab2_layout =DrugGUI.add_drug()
+
+
+
+
+
+# [  
 #         [sg.Graph(canvas_size=(500, 50), graph_bottom_left=(0,50), graph_top_right=(500, 0), background_color='white', key='-LABEL_GRAPH-')],
 #         [sg.Button('Print',key='-PRINT-')],
 #     ]    
@@ -59,11 +68,13 @@ main_layout = [
                 ]),
         sg.Column(
                 [[sg.TabGroup(
-                    [[sg.Tab('Drug Info.', tab1_layout, tooltip='Edit View',key='-TAB_EDIT-')]])]])
+                    [[sg.Tab('Drug Info.', tab1_layout, tooltip='Edit View',key='-TAB_EDIT-'), sg.Tab('New Drug', tab2_layout)]])]])
     ]
 ]
-# , sg.Tab('Label View', tab2_layout
+
 window = CustomWindow(APP_NAME, layout=main_layout, enable_close_attempted_event=True)
+
+
 
 def refresh_collection_page():
   if empl_collection.logged_on_employee:#only authorised employee can see collection
@@ -162,7 +173,7 @@ while True:
             print('Selected drug: ',drug)
             drug_collection.select(drug)
             DrugGUI.update(window,drug)
-            DrugGUI.draw_label(window['-LABEL_GRAPH-'],drug)
+            # DrugGUI.draw_label(window['-LABEL_GRAPH-'],drug)
 
         elif event =='-dob_DATETIME-PICKER-':             
             sg.popup_ok('This will be replaced by a date time picker UI element','Date time picker here!')

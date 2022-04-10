@@ -15,6 +15,7 @@
     along with this program.  If not, see http://www.gnu.org/licenses/.
 '''
 
+import PySimpleGUI as sg
 import json
 import PySimpleGUI as psg
 from config import *
@@ -92,6 +93,31 @@ class DrugGUI(Drug):
         #     'ui':psg.Text}
         #what about nested fields?, calculated fields?
     }
+
+    # ---NEW--- Adding drugs to DB
+    @classmethod
+    def add_drug(cls, button, values):
+
+        form = sg.FlexForm('Add drug form')  # begin with a blank form
+
+        layout = [
+                [sg.Text('Please enter all the required information')],
+                [sg.Text('ATC', size=(15, 1)), sg.InputText()],
+                [sg.Text('DIN', size=(15, 1)), sg.InputText()],
+                [sg.Text('Province', size=(15, 1)), sg.InputText()],
+                [sg.Text('Side affect', size=(15, 1)), sg.InputText()],
+                [sg.Text('Name', size=(15, 1)), sg.InputText()],
+                [sg.Text('Drug type', size=(15, 1)), sg.InputText()],
+                [sg.Submit(), sg.Cancel()]
+                ]
+
+        button, values = form.Layout(layout).Read()
+
+        print(button, values[0], values[1], values[2], values[3],
+                values[4], values[5], values[6])
+
+        form.close()
+
 
     @classmethod
     def make_layout(cls,do_not_show=[]):
