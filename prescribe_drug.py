@@ -51,6 +51,8 @@ tab1_layout =PatientGUI.make_layout(do_not_show=['vitals'])
 tab2_layout = [     
         [sg.Text('Medications')],
         [sg.Listbox(values=[],key='DrugList', size=(45,20))],
+        [sg.Text('Quantity:')],
+        [sg.InputText(key='doseBox')],
         [sg.Button('Prescribe Button')]
     ]    
 
@@ -74,8 +76,9 @@ main_layout = [
 
 window = CustomWindow(APP_NAME, layout=main_layout, enable_close_attempted_event=True)
 
-def openConfirmWindw():
-    confirm_layout = [[sg.Text('Confirmation to prescribe drug to patient?')],
+#Confirmation window to add drug to patient
+def openConfirmWindw(drug, patient):
+    confirm_layout = [[sg.Text('Confirmation to prescribe ' + str(drug) + ' to '+ str(patient)+'?')],
                         [sg.Submit(button_color='green'), sg.Cancel(button_color='red')]]
 
     windowConfirm = sg.Window("Confirmation Popup",confirm_layout, modal=True)
@@ -228,11 +231,13 @@ while True:
             #Make sure user has clicked on drug and patient
             if window['DrugList'].get() and window['-PATIENTS-'].get:
                
-                event = openConfirmWindw()
+                event = openConfirmWindw(values['DrugList'][0].get("TRADENAME").strip(), values['-PATIENTS-'][0])
                 if event == "Submit":
                     try:
-                        values['-PATIENTS-'][0].get('orders.medications').append({'drug': values['DrugList'][0].get("TRADENAME")}) 
-                        print("Prescribed drug: " + str(values['DrugList'][0].get("TRADENAME")))
+                        values['-PATIENTS-'][0].get('orders.medications').append({'drug': values['DrugList'][0].get("TRADENAME").strip()})
+                        values['-PATIENTS-'][0].get('orders.medications').append({'dose': values['doseBox']})
+
+                        print("Prescribed drug: " + str(values['DrugList'][0].get("TRADENAME") + " " + values['doseBox']))
                         patient.update(values)
                     except:
                         pass
