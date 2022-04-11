@@ -51,7 +51,7 @@ tab1_layout =PatientGUI.make_layout(do_not_show=['vitals'])
 tab2_layout = [     
         [sg.Text('Medications')],
         [sg.Listbox(values=[],key='DrugList', size=(45,20))],
-        [sg.Button('UpdateButton')]
+        [sg.Button('Prescribe Button')]
     ]    
 
 main_layout = [     
@@ -71,8 +71,17 @@ main_layout = [
     ]
 ]
 
+
 window = CustomWindow(APP_NAME, layout=main_layout, enable_close_attempted_event=True)
 
+def openConfirmWindw():
+    confirm_layout = [[sg.Text('Confirmation to prescribe drug to patient?')],
+                        [sg.Submit(button_color='green'), sg.Cancel(button_color='red')]]
+
+    windowConfirm = sg.Window("Confirmation Popup",confirm_layout, modal=True)
+    event, values = windowConfirm.read()
+    windowConfirm.close()
+    return event
 
 def refresh_collection_page():
   if empl_collection.logged_on_employee:#only authorised employee can see collection
@@ -194,7 +203,7 @@ while True:
             patient_collection.select(new_patient)
             PatientGUI.update(window,new_patient)  
             window['-TAB_EDIT-'].select()
-            window['MRN'].SetFocus()
+            window['id'].SetFocus()
             
         elif event =='-IMG-UPLOAD-':                
             print('browsing and uploading image')
@@ -215,16 +224,20 @@ while True:
             patient=patient_collection.get_selected()
 
         #When user pressues Update
-        elif event == 'UpdateButton':
+        elif event == 'Prescribe Button':
             #Make sure user has clicked on drug and patient
             if window['DrugList'].get() and window['-PATIENTS-'].get:
+               
+                event = openConfirmWindw()
+                if event == "Submit":
+                    try:
+                        values['-PATIENTS-'][0].get('orders.medications').append({'drug': values['DrugList'][0].get("TRADENAME")}) 
+                        print("Prescribed drug: " + str(values['DrugList'][0].get("TRADENAME")))
+                        patient.update(values)
+                    except:
+                        pass
+                    
 
-                #Verify selected drug
-                #print(values['DrugList'][0].get("TRADENAME"))
-                #Add selected to "windows"
-                values['-PATIENTS-'][0].get('orders.medications').append({'drug': values['DrugList'][0].get("TRADENAME")}) 
-                
-                patient.update(values)
         
 
 MiniMongo.disconnect()
